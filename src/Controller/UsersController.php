@@ -1,14 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: romuald
- * Date: 11/04/2017
- * Time: 15:06
- */
 
 namespace App\Controller;
-
-use Cake\ORM\TableRegistry;
 
 class UsersController extends AppController
 {
@@ -21,72 +13,50 @@ class UsersController extends AppController
 
     public function index()
     {
-        /*$articles = TableRegistry::get('Users');
-
-        $query = $articles->find();
-
-        foreach ($query as $row) {
-            echo $row->username;
-        }*/
         $users = $this->Users->find('all');
-        var_dump($users);
-        /*$this->set([
-            'users' => $users,
-            '_serialize' => ['users']
-        ]);*/
+        echo json_encode($users);
+        $this->autoRender = false;
     }
 
     public function view($id)
     {
-        $recipe = $this->Recipes->get($id);
-        $this->set([
-            'recipe' => $recipe,
-            '_serialize' => ['recipe']
-        ]);
+        $user = $this->Users->get($id);
+        echo json_encode($user);
+        $this->autoRender = false;
     }
 
     public function add()
     {
-        $recipe = $this->Recipes->newEntity($this->request->getData());
-        if ($this->Recipes->save($recipe)) {
-            $message = 'Saved';
+        $user = $this->Users->newEntity($this->request->getData());
+        if ($this->Users->save($user)) {
+            echo 'Enregistrement : '.json_encode($user);
         } else {
-            $message = 'Error';
+            echo 'Erreur';
         }
-        $this->set([
-            'message' => $message,
-            'recipe' => $recipe,
-            '_serialize' => ['message', 'recipe']
-        ]);
+        $this->autoRender = false;
     }
 
     public function edit($id)
     {
-        $recipe = $this->Recipes->get($id);
-        if ($this->request->is(['post', 'put'])) {
-            $recipe = $this->Recipes->patchEntity($recipe, $this->request->getData());
-            if ($this->Recipes->save($recipe)) {
-                $message = 'Saved';
+        $user = $this->Users->get($id);
+        if ($this->request->is(['patch', 'put'])) {// TRES IMPORTANT QUE LES DONNEES SOIT EN x-www-form-urlencoded
+            $this->Users->patchEntity($user, $this->request->getData());
+            if ($this->Users->save($user)) {
+                echo 'Mise a jour : '.json_encode($user);
             } else {
-                $message = 'Error';
+                echo 'Erreur';
             }
         }
-        $this->set([
-            'message' => $message,
-            '_serialize' => ['message']
-        ]);
+        $this->autoRender = false;
     }
 
     public function delete($id)
     {
-        $recipe = $this->Recipes->get($id);
-        $message = 'Deleted';
-        if (!$this->Recipes->delete($recipe)) {
-            $message = 'Error';
+        $user = $this->Users->get($id);
+        if (!$this->Users->delete($user)) {
+            echo 'Erreur';
         }
-        $this->set([
-            'message' => $message,
-            '_serialize' => ['message']
-        ]);
+        echo 'Suppression : '.json_encode($user);
+        $this->autoRender = false;
     }
 }
